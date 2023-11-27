@@ -34,8 +34,7 @@ library(reshape2)
 
 
 padron_parti$distrito_nombre <- reorder(padron_parti$distrito_nombre, -padron_parti$participacion)
-
-# Crea un gráfico de barras
+#Grafico participacion generales 
 ggplot(padron_parti, aes(x = distrito_nombre, y = participacion)) +
   geom_bar(stat = "identity", fill = "steelblue") +
   theme_minimal() +
@@ -47,6 +46,7 @@ tabla4 <- sqldf("SELECT AVG(participacion) AS Promedio_Participacion_Pais
 
 Padron_parti_paso <- arrow::read_parquet("D:/participaciones_PASO.parquet")
 Padron_parti_paso$distrito_nombre <- reorder(Padron_parti_paso$distrito_nombre, -Padron_parti_paso$participacion_PASO)
+#Grafico participacion paso
 ggplot(Padron_parti_paso, aes(x = distrito_nombre, y = participacion_PASO)) +
   geom_bar(stat = "identity", fill = "steelblue") +
   theme_minimal() +
@@ -55,3 +55,21 @@ ggplot(Padron_parti_paso, aes(x = distrito_nombre, y = participacion_PASO)) +
 
 tabla5 <- sqldf("SELECT AVG(participacion_PASO) AS Promedio_Participacion_Pais
       FROM Padron_parti_paso")
+
+
+
+ #Grafico de porcentaje de por provincia del total
+par(mar = c(7, 5, 6, 2) + 0.1)
+
+tabla3$Provincia[tabla3$Provincia == "Tierra del Fuego, Antártida e Islas del Atlántico Sur"] <- "Tierra del Fuego"
+tabla3$Provincia[tabla3$Provincia == "Ciudad Autónoma de Buenos Aires"] <- "CABA"
+
+bp <- barplot(porcentaje, 
+              ylab = "Porcentaje de votos",
+              las = 2, 
+              width = 0.7, 
+              ylim = c(0, max(porcentaje) + 5))  
+axis(1, at = bp, labels = tabla3$Provincia, las = 2, cex.axis = 0.8)
+
+
+
